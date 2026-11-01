@@ -85,10 +85,15 @@ export const PhotoUploadZone: React.FC<PhotoUploadZoneProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const photoWrapperRef = useRef<HTMLDivElement>(null);
+  const clippingHeatmapCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // All state declarations first (Prevents TDZ reference errors)
   const [isDragOver, setIsDragOver] = useState(false);
   const [copiedHash, setCopiedHash] = useState(false);
+  const [previewMode, setPreviewMode] = useState<PreviewMode>('split');
+  const [splitPosition, setSplitPosition] = useState<number>(50); // percentage 0 to 100
+  const [isDraggingSplit, setIsDraggingSplit] = useState(false);
   const [showClippingHeatmap, setShowClippingHeatmap] = useState(false);
-  const clippingHeatmapCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // Render non-destructive clipping heatmap overlay
   useEffect(() => {
@@ -147,11 +152,6 @@ export const PhotoUploadZone: React.FC<PhotoUploadZoneProps> = ({
 
     ctx.putImageData(outImgData, 0, 0);
   }, [showClippingHeatmap, isApplied, previewMode, correctionParams]);
-
-  // Preview Mode: default to 'split' when applied, otherwise 'original'
-  const [previewMode, setPreviewMode] = useState<PreviewMode>('split');
-  const [splitPosition, setSplitPosition] = useState<number>(50); // percentage 0 to 100
-  const [isDraggingSplit, setIsDraggingSplit] = useState(false);
 
   // Set default previewMode to 'split' once applied
   useEffect(() => {
