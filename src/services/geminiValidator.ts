@@ -314,7 +314,61 @@ export function validateAndNormalizeGeminiResult(
     'Foto hasil perbaikan akan memiliki karakter visual yang lebih hidup, jernih, dan dinamis dengan warna kulit natural yang tetap terjaga seutuhnya.'
   );
 
+  
+  // Normalize Highlight Clipping & Recovery Assessment (Patch Feature)
+  const clipRaw = rawJson.highlightClippingAssessment || repRaw.highlightClippingAssessment || {};
+  const recHigh = typeof clipRaw.recommendedHighlights === 'number' 
+    ? clipRaw.recommendedHighlights 
+    : (light.highlights?.recommendedValue ?? 0);
+  const recWhites = typeof clipRaw.recommendedWhites === 'number' 
+    ? clipRaw.recommendedWhites 
+    : (light.whites?.recommendedValue ?? 0);
+
+  let defaultStatus: ClippingSeverity = 'Tidak mengalami clipping';
+  let defaultSeverity: 'Normal' | 'Ringan' | 'Sedang' | 'Berat' | 'Ekstrem' = 'Normal';
+  let defaultFeasibility: RecoveryFeasibility = 'Detail masih tersedia dan berpotensi dipulihkan';
+
+  if (recHigh <= -50 || recWhites <= -30) {
+    defaultStatus = 'Clipping berat';
+    defaultSeverity = 'Berat';
+    defaultFeasibility = 'Detail sangat terbatas';
+  } else if (recHigh <= -25 || recWhites <= -15) {
+    defaultStatus = 'Clipping sedang';
+    defaultSeverity = 'Sedang';
+    defaultFeasibility = 'Detail sebagian tersedia';
+  } else if (recHigh < 0 || recWhites < 0) {
+    defaultStatus = 'Clipping ringan';
+    defaultSeverity = 'Ringan';
+    defaultFeasibility = 'Detail masih tersedia dan berpotensi dipulihkan';
+  }
+
+  const highlightClippingAssessment: HighlightClippingAssessment = {
+    status: clipRaw.status || defaultStatus,
+    severityLevel: clipRaw.severityLevel || defaultSeverity,
+    affectedAreas: Array.isArray(clipRaw.affectedAreas) && clipRaw.affectedAreas.length > 0
+      ? clipRaw.affectedAreas.map((a: any) => String(a))
+      : ['Sumber cahaya latar / Pantulan sorotan'],
+    estimatedClippingPercentage: typeof clipRaw.estimatedClippingPercentage === 'number'
+      ? clipRaw.estimatedClippingPercentage
+      : (defaultSeverity === 'Normal' ? 0.2 : defaultSeverity === 'Ringan' ? 1.5 : defaultSeverity === 'Sedang' ? 4.2 : 9.5),
+    isNaturalWhiteProtected: clipRaw.isNaturalWhiteProtected !== false,
+    recoveryAssessment: clipRaw.recoveryAssessment || defaultFeasibility,
+    rootCauseAnalysis: cleanString(
+      clipRaw.rootCauseAnalysis,
+      'Distribusi tonal sorotan dievaluasi dengan perlindungan warna putih alami (baju/dinding) agar tidak salah diklasifikasikan sebagai overexposure.'
+    ),
+    recommendedHighlights: recHigh,
+    recommendedWhites: recWhites,
+    recommendedLocalMasking: clipRaw.recommendedLocalMasking || 'Pertimbangkan masking lokal bila overexposure terkonsentrasi di satu sisi latar.',
+    permanentDataLossWarning: Boolean(
+      clipRaw.permanentDataLossWarning || 
+      clipRaw.status === 'Clipping ekstrem' || 
+      clipRaw.recoveryAssessment === 'Detail sudah hilang akibat clipping'
+    )
+  };
+
   const photoAnalysisReport: PhotoAnalysisReport = {
+    highlightClippingAssessment,
     sectionA_actualObservation: sectionA,
     sectionB_detectedDefects: sectionB,
     sectionC_userDirectiveInterpretation: sectionC,
@@ -342,6 +396,7 @@ export function validateAndNormalizeGeminiResult(
     ),
     customInstructionsSummary: customSummary,
     photoAnalysisReport,
+    highlightClippingAssessment,
     detectedIssues: Array.isArray(rawJson.detectedIssues) ? rawJson.detectedIssues : [],
     optimalParametersCount: optimalCount,
     needsAdjustmentCount: needsAdjCount,

@@ -392,6 +392,19 @@ Berikan analisis menyeluruh dalam BAHASA INDONESIA dalam format JSON valid dan t
   "overallQuality": "Sangat Baik" | "Baik" | "Cukup" | "Perlu Perbaikan Signifikan",
   "technicalSummary": "Ringkasan kondisi pencahayaan, tonal range, white balance, dan noise dalam 2-3 kalimat objektif.",
   
+  "highlightClippingAssessment": {
+    "status": "Tidak mengalami clipping" | "Clipping ringan" | "Clipping sedang" | "Clipping berat" | "Clipping ekstrem",
+    "severityLevel": "Normal" | "Ringan" | "Sedang" | "Berat" | "Ekstrem",
+    "affectedAreas": ["Jendela & Sumber Cahaya", "Dinding Latar Belakang"],
+    "estimatedClippingPercentage": 3.5,
+    "isNaturalWhiteProtected": true,
+    "recoveryAssessment": "Detail masih tersedia dan berpotensi dipulihkan" | "Detail sebagian tersedia" | "Detail sangat terbatas" | "Detail sudah hilang akibat clipping",
+    "rootCauseAnalysis": "Uraian teknis mengapa overexposure terjadi...",
+    "recommendedHighlights": -30,
+    "recommendedWhites": -15,
+    "recommendedLocalMasking": "Gunakan linear mask pada area jendela agar subjek tidak menggelap",
+    "permanentDataLossWarning": false
+  },
   "photoAnalysisReport": {
     "sectionA_actualObservation": "Penjelasan kondisi aktual foto berdasarkan pengamatan visual Gemini 3.5 Flash-Lite (pencahayaan, tonal range, skin tone, dan detail)...",
     "sectionB_detectedDefects": [

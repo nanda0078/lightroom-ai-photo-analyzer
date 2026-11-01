@@ -174,6 +174,29 @@ ATURAN MUTLAK & PRINSIP TEKNIS:
    - Sharpening: 0 hingga 150 (Radius 0.5..3.0, Detail 0..100, Masking 0..100)
    - Noise Reduction: 0 hingga 100
 
+
+=======================================================================
+PROTOKOL EVALUASI HIGHLIGHT CLIPPING & RECOVERY ASSESSMENT (WAJIB):
+=======================================================================
+1. PEMBEDAAN WARNA PUTIH ALAMI VS CLIPPING (ATURAN SANGAT PENTING):
+   - Objek putih alami (dinding putih, gaun putih, kertas) dengan detail/tekstur yang masih terjaga BUKANLAH highlight clipping / overexposure.
+   - Hanya area di mana piksel mencapai batas saturasi sensor digital (RGB rata 255, blown-out, tekstur lenyap) yang dihitung sebagai clipping.
+   - JANGAN menurunkan Whites secara agresif hanya karena foto memiliki latar belakang putih!
+2. EVALUASI TINGKAT KEPARAHAN:
+   - "Tidak mengalami clipping": Dynamic range optimal, tidak ada area terbakar (< 0.5%).
+   - "Clipping ringan": Kilau spekular alami pada perhiasan/mata (0.5% - 2%).
+   - "Clipping sedang": Area terang pada pakaian/dinding mulai kehilangan sedikit gradasi (2% - 6%).
+   - "Clipping berat": Area wajah/latar terbakar cahaya kuat (6% - 15%).
+   - "Clipping ekstrem": Area besar (> 15%) putih polos tanpa data piksel tersisa.
+3. KEMUNGKINAN PEMULIHAN (RECOVERY ASSESSMENT):
+   - "Detail masih tersedia dan berpotensi dipulihkan": Data tonal masih tersimpan di kanal piksel.
+   - "Detail sebagian tersedia": Sorotan bisa diredam namun kontras mikro terbatas.
+   - "Detail sangat terbatas": Sebagian kanal warna telah terpotong (clipped).
+   - "Detail sudah hilang akibat clipping": Piksel mencapai batas sensor. JANGAN berjanji palsu memulihkan data yang telah hilang!
+4. PARAMETER LIGHTROOM TERPISAH:
+   - Prioritaskan koreksi "highlights" (-15 s/d -60) dan "whites" (-10 s/d -30) untuk meredam sorotan.
+   - JANGAN menurunkan Exposure global secara drastis jika overexposure hanya di latar belakang, agar wajah dan pakaian subjek tidak menjadi gelap gulita!
+
 ${customSection}
 
 Berikan respon HANYA dalam format JSON valid dan terstruktur persis sesuai skema ini:
@@ -181,6 +204,19 @@ Berikan respon HANYA dalam format JSON valid dan terstruktur persis sesuai skema
   "overallQuality": "Sangat Baik" | "Baik" | "Cukup" | "Perlu Perbaikan Signifikan",
   "technicalSummary": "Ringkasan kondisi pencahayaan, dynamic range, white balance, dan noise dalam 2-3 kalimat objektif berdasarkan visual foto aktual.",
   
+    "highlightClippingAssessment": {
+    "status": "Tidak mengalami clipping" | "Clipping ringan" | "Clipping sedang" | "Clipping berat" | "Clipping ekstrem",
+    "severityLevel": "Normal" | "Ringan" | "Sedang" | "Berat" | "Ekstrem",
+    "affectedAreas": ["Jendela & Sumber Cahaya", "Dinding Latar Belakang"],
+    "estimatedClippingPercentage": 3.5,
+    "isNaturalWhiteProtected": true,
+    "recoveryAssessment": "Detail masih tersedia dan berpotensi dipulihkan" | "Detail sebagian tersedia" | "Detail sangat terbatas" | "Detail sudah hilang akibat clipping",
+    "rootCauseAnalysis": "Uraian teknis mengapa overexposure terjadi...",
+    "recommendedHighlights": -30,
+    "recommendedWhites": -15,
+    "recommendedLocalMasking": "Gunakan linear mask pada area jendela agar subjek tidak menggelap",
+    "permanentDataLossWarning": false
+  },
   "photoAnalysisReport": {
     "sectionA_actualObservation": "Penjelasan kondisi aktual foto berdasarkan pengamatan visual Gemini 3.5 Flash-Lite (pencahayaan, tonal range, skin tone, dan detail)...",
     "sectionB_detectedDefects": [

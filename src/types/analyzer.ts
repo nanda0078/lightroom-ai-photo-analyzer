@@ -138,6 +138,34 @@ export interface ColorGradingZone {
   luminance: LightroomParameter;
 }
 
+
+export type ClippingSeverity = 
+  | 'Tidak mengalami clipping'
+  | 'Clipping ringan'
+  | 'Clipping sedang'
+  | 'Clipping berat'
+  | 'Clipping ekstrem';
+
+export type RecoveryFeasibility = 
+  | 'Detail masih tersedia dan berpotensi dipulihkan'
+  | 'Detail sebagian tersedia'
+  | 'Detail sangat terbatas'
+  | 'Detail sudah hilang akibat clipping';
+
+export interface HighlightClippingAssessment {
+  status: ClippingSeverity;
+  severityLevel: 'Normal' | 'Ringan' | 'Sedang' | 'Berat' | 'Ekstrem';
+  affectedAreas: string[];
+  estimatedClippingPercentage: number;
+  isNaturalWhiteProtected: boolean;
+  recoveryAssessment: RecoveryFeasibility;
+  rootCauseAnalysis: string;
+  recommendedHighlights: number;
+  recommendedWhites: number;
+  recommendedLocalMasking?: string;
+  permanentDataLossWarning: boolean;
+}
+
 export interface DetectedDefect {
   issue: string;
   description: string;
@@ -164,6 +192,8 @@ export interface PhotoAnalysisReport {
   sectionD_aiCorrectionPlan: string[];
   // E. HASIL VISUAL YANG DIHARAPKAN
   sectionE_expectedVisualOutcome: string;
+  // HIGHLIGHT CLIPPING ASSESSMENT
+  highlightClippingAssessment?: HighlightClippingAssessment;
 }
 
 export interface CustomInstructionsSummary {
@@ -180,6 +210,7 @@ export interface PhotoAnalysisResult {
   modelUsed?: string;
   customInstructionsSummary?: CustomInstructionsSummary;
   photoAnalysisReport?: PhotoAnalysisReport;
+  highlightClippingAssessment?: HighlightClippingAssessment;
   analysis?: {
     exposure?: { status: string; recommended_value: number; reason: string };
     contrast?: { status: string; recommended_value: number; reason: string };

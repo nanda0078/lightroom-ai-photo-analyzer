@@ -365,6 +365,25 @@ export const PhotoUploadZone: React.FC<PhotoUploadZoneProps> = ({
                     <span>Foto Asli (Before)</span>
                   </button>
 
+                  
+                  {/* Highlight Clipping Heatmap Toggle Button */}
+                  <button
+                    type="button"
+                    onClick={() => setShowClippingHeatmap(!showClippingHeatmap)}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer ${
+                      showClippingHeatmap
+                        ? 'bg-rose-500/90 text-white border border-rose-400 font-bold shadow-md shadow-rose-950/40'
+                        : 'text-slate-400 hover:text-slate-200 bg-slate-900/80 border border-slate-800 hover:border-slate-700'
+                    }`}
+                    title="Aktifkan visualisasi Heatmap Highlight Clipping (Merah = Pure Clipping, Kuning = Near Clipping)"
+                  >
+                    <Flame className={`w-3.5 h-3.5 ${showClippingHeatmap ? 'text-white' : 'text-rose-400'}`} />
+                    <span className="hidden sm:inline">Heatmap Clipping</span>
+                    {showClippingHeatmap && (
+                      <span className="text-[9px] font-mono px-1 rounded bg-black/40 text-rose-200">ON</span>
+                    )}
+                  </button>
+
                   {/* Hold to Compare quick button */}
                   <button
                     type="button"
@@ -544,6 +563,25 @@ export const PhotoUploadZone: React.FC<PhotoUploadZoneProps> = ({
                 </div>
               )}
             </div>
+
+            {/* Heatmap Legend Bar when active */}
+            {showClippingHeatmap && (
+              <div className="flex flex-wrap items-center justify-between gap-3 px-3 py-2 rounded-lg bg-slate-950 border border-rose-500/30 text-xs font-mono animate-in fade-in duration-200">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_6px_rgba(239,68,68,0.8)]" />
+                    <span className="text-slate-200">Merah: Pure Highlight Clipping (RGB &ge; 250)</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
+                    <span className="text-slate-200">Kuning: Near-Clipping Warning (RGB &ge; 240)</span>
+                  </div>
+                </div>
+                <span className="text-[10px] text-emerald-400 font-sans">
+                  Overlay Pratinjau 100% Non-Destruktif (Tidak Mengubah Foto Asli)
+                </span>
+              </div>
+            )}
 
             {/* Technical Metadata Grid */}
             <div className="bg-[#181c26] border border-slate-800/80 rounded-lg p-3 sm:p-4 text-xs space-y-2.5">
