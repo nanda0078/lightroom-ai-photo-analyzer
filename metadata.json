@@ -1,0 +1,6 @@
+{
+  "name": "Lightroom AI Photo Analyzer",
+  "description": "Sistem analisis visual foto profesional dan rekomendasi parameter Adobe Lightroom berbasis Gemini AI dengan pelestarian foto asli 100%.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

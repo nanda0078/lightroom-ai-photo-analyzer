@@ -1,0 +1,9 @@
+{
+  "appId": "com.sevenstudio.lightroomai",
+  "appName": "LIGHTROOM AI ANALYZER",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
