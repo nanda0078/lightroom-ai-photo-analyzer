@@ -613,7 +613,7 @@ export default function App() {
 
       setCorrectionParams(aiParams);
       setIsApplied(true);
-      setLifecycleState('corrected');
+      setLifecycleState('ready');
       setIsProcessingCorrection(false);
 
       // Schedule render cleanly via requestAnimationFrame after state update

@@ -11,7 +11,10 @@ import {
   LightroomParameter,
   CorrectionParameters,
   DEFAULT_CORRECTION_PARAMETERS,
-  DEFAULT_SMART_SHARPENING
+  DEFAULT_SMART_SHARPENING,
+  ClippingSeverity,
+  RecoveryFeasibility,
+  HighlightClippingAssessment
 } from '../types/analyzer';
 
 export interface ValidationContext {

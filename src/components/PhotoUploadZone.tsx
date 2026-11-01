@@ -6,6 +6,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import {
   UploadCloud,
+  Flame,
   FileImage,
   Download,
   ShieldCheck,
