@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="id" class="dark" style="background-color: #0b0d12; color: #f1f5f9;">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lightroom AI Photo Analyzer</title>
+    <meta name="description" content="Sistem analisis visual foto profesional dan rekomendasi parameter Adobe Lightroom berbasis Gemini AI dengan pelestarian foto asli 100%." />
+    <meta property="og:title" content="Lightroom AI Photo Analyzer" />
+    <meta property="og:description" content="Sistem analisis visual foto profesional dan rekomendasi parameter Adobe Lightroom berbasis Gemini AI dengan pelestarian foto asli 100%." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+      // Otomatis unregister service worker lawas dari proyek port 3000 sebelumnya untuk mencegah konflik cache
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for (var i = 0; i < registrations.length; i++) {
+            registrations[i].unregister();
+          }
+        }).catch(function() {});
+      }
+    </script>
+    <style>body{color:#f1f5f9;background-color:#0b0d12;margin:0;font-family:Plus Jakarta Sans,system-ui,-apple-system,sans-serif}.initial-loader{color:#94a3b8;background-color:#0b0d12;flex-direction:column;justify-content:center;align-items:center;gap:16px;min-height:100vh;display:flex}.loader-spinner{border:3px solid #f59e0b33;border-top-color:#f59e0b;border-radius:50%;width:38px;height:38px;animation:.8s linear infinite spin}@keyframes spin{to{transform:rotate(360deg)}}</style>
+    <script type="module" crossorigin src="./assets/index-Dd8v07Yk.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BeLb7LbM.css">
+  </head>
+  <body class="bg-[#0b0d12] text-slate-100 antialiased min-h-screen selection:bg-amber-500/30 selection:text-amber-200" style="background-color: #0b0d12;">
+    <div id="root">
+      <div class="initial-loader">
+        <div class="loader-spinner"></div>
+        <p style="font-size: 13px; font-weight: 500; color: #94a3b8; letter-spacing: 0.05em;">Memuat Lightroom AI Analyzer...</p>
+      </div>
+    </div>
+  </body>
+</html>
