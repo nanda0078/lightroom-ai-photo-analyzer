@@ -15,6 +15,7 @@ import { IntegrityModal } from './components/IntegrityModal';
 import { ApiSettingsModal } from './components/ApiSettingsModal';
 import { GuideModal } from './components/GuideModal';
 import { SmartSharpeningPanel } from './components/SmartSharpeningPanel';
+import { SafeErrorBoundary } from './components/SafeErrorBoundary';
 import {
   PhotoAnalysisResult,
   CorrectionParameters,
@@ -30,7 +31,7 @@ import { getStoredApiKey, getMaskedKey, analyzePhotoWithGeminiClient, CONFIGURED
 import { extractUnifiedCorrectionParameters } from './services/geminiValidator';
 import { GeminiTelemetryData } from './components/AnalysisSummaryCard';
 import { calculateSHA256 } from './utils/crypto';
-import { AlertCircle, AlertTriangle, CheckCircle, Sparkles, SlidersHorizontal, RefreshCw } from 'lucide-react';
+import { AlertCircle, AlertTriangle, CheckCircle, Sparkles, SlidersHorizontal, RefreshCw, Flame } from 'lucide-react';
 
 function parseNumericValue(val: any, fallback = 0): number {
   if (typeof val === 'number') return isNaN(val) ? fallback : val;
@@ -349,8 +350,15 @@ export default function App() {
       const analysisStartTime = performance.now();
       let data: PhotoAnalysisResult | null = null;
 
-      // 1. Try backend server proxy if running locally
-      let backendFailed = false;
+      // Check if running on GitHub Pages or standalone static environment
+      const isStaticHost = typeof window !== 'undefined' && (
+        window.location.hostname.includes('github.io') ||
+        window.location.protocol === 'file:' ||
+        window.location.protocol === 'capacitor:'
+      );
+
+      let backendFailed = isStaticHost;
+      if (!isStaticHost)
       try {
         const response = await fetch('/api/analyze-photo', {
           method: 'POST',
@@ -448,7 +456,7 @@ export default function App() {
       }
       console.error('[Gemini Analysis Error]:', err);
       setGeminiPhase('FAILED');
-      setAnalysisResult(null);
+      // Pertahankan hasil analisis sebelumnya agar tidak hilang jika terjadi error pada analisis ulang
       setErrorMessage(
         err?.message || 'Terjadi kesalahan saat memproses analisis visual foto dengan Gemini AI.'
       );
@@ -600,32 +608,40 @@ export default function App() {
     handleStartAnalysis();
   };
 
-  // Handle [ TERAPKAN SEMUA REKOMENDASI AI ]
+  // Handle [ TERAPKAN RENCANA PERBAIKAN ]
   const handleApplyCorrection = () => {
     setIsProcessingCorrection(true);
     setDiagnosticError(null);
 
     try {
-      // Ensure preview baseline is initialized if not already
+      // 1. Membaca hasil analisis visual Gemini & seluruh parameter rekomendasi
+      const targetParams = analysisResult
+        ? extractUnifiedCorrectionParameters(analysisResult)
+        : (aiParams || correctionParams);
+
+      // 2. Memproses dan menyelaraskan parameter koreksi
+      setCorrectionParams(targetParams);
+      setAiParams(targetParams);
+
+      // 3. Memastikan mesin pratinjau kanvas terinisialisasi
       if (sourceImageRef.current && !PreviewEngine.isInitialized()) {
         PreviewEngine.init(sourceImageRef.current, 1920);
       }
 
-      setCorrectionParams(aiParams);
+      // 4. Menampilkan hasil parameter yang siap diterapkan
       setIsApplied(true);
       setLifecycleState('ready');
-      setIsProcessingCorrection(false);
 
-      // Schedule render cleanly via requestAnimationFrame after state update
+      // 5. Merender hasil perbaikan secara non-generatif (foto asli 100% terjaga sebagai SOURCE OF TRUTH)
       requestAnimationFrame(() => {
         try {
-          renderPreviewCanvas(aiParams);
+          renderPreviewCanvas(targetParams);
         } catch (rErr) {
           console.warn('Deferred render error:', rErr);
         }
       });
     } catch (err: any) {
-      console.error('Error applying correction plan:', err);
+      console.error('[Terapkan Rencana Perbaikan Error]:', err);
       setDiagnosticError({
         type: 'canvas_render_error',
         title: 'Gagal Menerapkan Rencana Perbaikan',
@@ -633,6 +649,7 @@ export default function App() {
         recoveryAction: 'Coba tekan kembali tombol Terapkan Rencana Perbaikan.',
         timestamp: new Date().toISOString()
       });
+    } finally {
       setIsProcessingCorrection(false);
     }
   };

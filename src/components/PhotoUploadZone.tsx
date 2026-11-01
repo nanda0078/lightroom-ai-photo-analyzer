@@ -717,7 +717,7 @@ export const PhotoUploadZone: React.FC<PhotoUploadZoneProps> = ({
                     className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-bold text-xs shadow-md transition-all cursor-pointer disabled:opacity-50"
                   >
                     <Sparkles className="w-4 h-4" />
-                    <span>TERAPKAN SEMUA REKOMENDASI AI</span>
+                    <span>TERAPKAN RENCANA PERBAIKAN</span>
                   </button>
                 )}
 

@@ -2,6 +2,13 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
+import { Flame } from 'lucide-react';
+
+// Guarantee that Flame is always defined globally in the browser environment
+// to eliminate any ReferenceError ('Flame is not defined')
+if (typeof window !== 'undefined') {
+  (window as any).Flame = Flame;
+}
 
 interface ErrorBoundaryProps {
   children: ReactNode;
