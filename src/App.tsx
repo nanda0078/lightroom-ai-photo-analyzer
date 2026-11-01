@@ -107,6 +107,7 @@ export default function App() {
   // Canvas and Image references
   const correctedCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const sourceImageRef = useRef<HTMLImageElement | null>(null);
+  const imagePreviewUrlRef = useRef<string | null>(null);
 
   // Modals & Telemetry
   const [isIntegrityModalOpen, setIsIntegrityModalOpen] = useState(false);
@@ -180,7 +181,6 @@ export default function App() {
       });
   }, []);
 
-  const imagePreviewUrlRef = useRef<string | null>(null);
 
   // Clean up preview engine and blob URLs ONLY on component unmount
   useEffect(() => {
@@ -605,29 +605,36 @@ export default function App() {
     setIsProcessingCorrection(true);
     setDiagnosticError(null);
 
-    // Ensure preview baseline is initialized if not already
-    if (sourceImageRef.current && !PreviewEngine.isInitialized()) {
-      try {
+    try {
+      // Ensure preview baseline is initialized if not already
+      if (sourceImageRef.current && !PreviewEngine.isInitialized()) {
         PreviewEngine.init(sourceImageRef.current, 1920);
-      } catch (initErr: any) {
-        setDiagnosticError({
-          type: 'canvas_render_error',
-          title: 'Inisialisasi Pratinjau Gagal',
-          message: initErr?.message || 'Gagal menyiapkan memori kanvas pratinjau.',
-          timestamp: new Date().toISOString()
-        });
-        setIsProcessingCorrection(false);
-        return;
       }
+
+      setCorrectionParams(aiParams);
+      setIsApplied(true);
+      setLifecycleState('corrected');
+      setIsProcessingCorrection(false);
+
+      // Schedule render cleanly via requestAnimationFrame after state update
+      requestAnimationFrame(() => {
+        try {
+          renderPreviewCanvas(aiParams);
+        } catch (rErr) {
+          console.warn('Deferred render error:', rErr);
+        }
+      });
+    } catch (err: any) {
+      console.error('Error applying correction plan:', err);
+      setDiagnosticError({
+        type: 'canvas_render_error',
+        title: 'Gagal Menerapkan Rencana Perbaikan',
+        message: err?.message || 'Terjadi kesalahan saat memproses parameter koreksi.',
+        recoveryAction: 'Coba tekan kembali tombol Terapkan Rencana Perbaikan.',
+        timestamp: new Date().toISOString()
+      });
+      setIsProcessingCorrection(false);
     }
-
-    setIsApplied(true);
-    setIsProcessingCorrection(false);
-
-    // Schedule render cleanly via requestAnimationFrame after state update
-    requestAnimationFrame(() => {
-      renderPreviewCanvas(correctionParams);
-    });
   };
 
   // Handle manual adjustments (Zero Gemini API re-triggering, pure local preview)
